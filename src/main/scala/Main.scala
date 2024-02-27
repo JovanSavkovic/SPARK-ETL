@@ -17,13 +17,12 @@ object Main {
     val wheatUrl = s"https://www.alphavantage.co/query?function=WHEAT&interval=monthly&apikey=$apiKey"
     val inputWheatDF = Extractor.extractData(spark, wheatUrl)
 
-    // Extract data for prices of corn
-    val cornUrl = s"https://www.alphavantage.co/query?function=CORN&interval=monthly&apikey=$apiKey"
-    val inputCornDF = Extractor.extractData(spark, cornUrl)
+    // Perform simple transformations on the dataset
+    val transformedWheatDf = Transformer.transformData(inputWheatDF, "WHEAT", spark)
 
-    val transformedWheatDf = Transformer.transformData(inputWheatDF, "WHEAT")
-
-    transformedWheatDf.show
+    // Load the data into storage
+    val outputPath = "./Output/output.csv"
+    Loader.loadData(transformedWheatDf, outputPath)
     spark.stop()
   }
 }
